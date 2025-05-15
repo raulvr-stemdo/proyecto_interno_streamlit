@@ -67,8 +67,6 @@ with tab1:
 
     st.pyplot(plt)
 
-    
-
 with tab2:
     df_reviews_y_score["Estado"] = df_reviews_y_score["Estado"].map(st.session_state["state_map"])
     st.write(df_reviews_y_score)

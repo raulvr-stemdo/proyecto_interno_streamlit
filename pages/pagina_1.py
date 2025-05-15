@@ -52,7 +52,7 @@ with tab1:
     )
     axs1.set_xlabel("Estados")
     axs1.set_ylabel("Número de clientes")
-    st.pyplot(plt)
+    st.pyplot(fig1)
     
     # Gráfica por ciudades
     st.header("Número de clientes por ciudad")
@@ -64,7 +64,7 @@ with tab1:
     )
     axs2.set_xlabel("Ciudades")
     axs2.set_ylabel("Número de clientes")
-    st.pyplot(plt)
+    st.pyplot(fig2)
 
 with tab2:
     st.header("Tabla top clientes por estado")

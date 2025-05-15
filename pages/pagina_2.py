@@ -50,7 +50,7 @@ with tab1:
     ax.set_xlabel("Porcentaje de pedidos")
     ax.set_ylabel("Ciudades")
     ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{x}%'))
-    st.pyplot(fig)
+    st.pyplot(plt)
     
 with tab2:
     st.header("Tabla pedidos")
