@@ -20,23 +20,37 @@ with st.sidebar:
     st.divider()
     n_ciudades = st.slider("Número de ciudades", 1, 10, value=5)
 
-df2=df.groupby(["customer_city", "customer_state"]).agg({'order_id':'count','customer_id':'count'}).reset_index()
-df2 = df2.rename(columns={"customer_city":"ciudad", "customer_state":"estado", "order_id":"numero_pedidos", "customer_id":"numero_clientes"})
-df2['%_pedidos'] = (df2['numero_pedidos'] * 100) / df2["numero_pedidos"].sum()
-df2['Ratio Pedidos/Clientes'] = (df2['numero_pedidos']) / (df2["numero_clientes"] )
-top_n = df2.sort_values("%_pedidos", ascending=False).head(n_ciudades).reset_index()
+# Filtrado por fecha
+df_by_date = df[(df["order_purchase_date"] >= pd.to_datetime(st.session_state.fecha_inicio)) & (df["order_purchase_date"] <= pd.to_datetime(st.session_state.fecha_fin))]
+
+# Calculo del nº clientes por estado y ciudad
+df=df_by_date.groupby(["customer_city", "customer_state"]).agg({'order_id':'count','customer_id':'count'}).reset_index()
+
+# Calculo del porcentaje de pedidos
+df['%_pedidos'] = (df['order_id'] * 100) / df["order_id"].sum()
+
+# Calculo del ratio pedidos/clientes
+df['Ratio Pedidos/Clientes'] = (df['order_id']) / (df["customer_id"] )
+
+# Top N
+top_n = df.sort_values("%_pedidos", ascending=False).head(n_ciudades).reset_index()
+top_n = top_n.drop(columns="index")
+
+top_n["customer_state"] = top_n["customer_state"].map(st.session_state["state_map"])
+top_n["customer_city"] = top_n["customer_city"].str.capitalize()
+top_n = top_n.rename(columns={"customer_city":"Ciudad", "customer_state":"Estado", "order_id":"Pedidos", "customer_id":"Clientes", "%_pedidos":"Pedidos (%)"})
+
 st.header("Análisis de Pedidos")
 tab1, tab2 = st.tabs(["📈 Gráficas", "📋 Tablas"])
 
 with tab1:
     st.header("Porcentaje de pedidos por ciudad")
     fig, ax = plt.subplots(figsize=(10, 6))
-    ax.barh(top_n["ciudad"], top_n['%_pedidos'], color="#ad8150")
+    ax.barh(top_n["Ciudad"], top_n['Pedidos (%)'], color="#ad8150")
     ax.set_xlabel("Porcentaje de pedidos")
     ax.set_ylabel("Ciudades")
-    ax.legend()
     st.pyplot(plt)
     
 with tab2:
     st.header("Tabla pedidos")
-    st.write(top_n.sort_values(by="%_pedidos", ascending=False))
+    st.write(top_n.sort_values(by="Pedidos (%)", ascending=False))
