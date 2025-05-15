@@ -49,7 +49,8 @@ with tab1:
     ax.barh(top_n["Ciudad"], top_n['Pedidos (%)'], color="#ad8150")
     ax.set_xlabel("Porcentaje de pedidos")
     ax.set_ylabel("Ciudades")
-    st.pyplot(plt)
+    ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{x}%'))
+    st.pyplot(fig)
     
 with tab2:
     st.header("Tabla pedidos")
